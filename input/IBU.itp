@@ -1,0 +1,64 @@
+[ moleculetype ]
+; molname        nrexcl
+IBU             1
+
+
+[ atoms ]
+; id type resnr residue   atom  cgnr    charge 
+
+1     Q1n    1     IBU     R1  1     -1.00000     
+2     C1     1     IBU     R2  2      0.00000     
+3     SC4     1    IBU     R3  3      0.00000     
+4     SC4     1    IBU     R4  4      0.00000     
+5     SC4     1    IBU     R5  5      0.00000
+
+#ifdef FLEXIBLE   
+[ bonds ]
+;   i     j   funct   length
+; bond type 1
+    3     4    1   0.28  100000
+
+; bond type 2
+    3     5    1   0.28  100000
+
+; bond type 3
+    4     5    1    0.28  100000
+
+; bond type 4
+    2     4    1    0.3  8500.00           ; 1
+
+; bond type 5
+    1     3    1    0.28  8500.00           ; 2
+#else
+[ constraints ]
+;   i     j   funct   length
+; bond type 1
+    3     4    1     0.28
+
+; bond type 2
+    3     5    1     0.28
+
+; bond type 3
+    4     5    1     0.28
+[ bonds ]
+;   i     j   funct   length   force.c.
+; bond type 1
+    2     4       1    0.3  8500.00           ; 1
+
+; bond type 2
+    1     3       1    0.28  8500.00           ; 2
+#endif
+    
+#ifdef POSRES
+[ position_restraints ]
+;  i funct       fcx        fcy        fcz
+   1    1       1000       1000       1000
+   2    1       1000       1000       1000
+   3    1       1000       1000       1000
+   4    1       1000       1000       1000
+   5    1       1000       1000       1000
+#endif
+    
+
+
+

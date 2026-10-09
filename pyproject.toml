@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "liposome-pipeline"
+version = "0.1.0"
+description = "Automated Martini 3 liposome construction with GROMACS and drug-partitioning analysis"
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.9"
+authors = [{ name = "Hamza Habib" }]
+keywords = ["molecular dynamics", "GROMACS", "Martini", "liposome", "drug delivery"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Topic :: Scientific/Engineering :: Chemistry",
+]
+dependencies = ["numpy", "pandas", "matplotlib", "MDAnalysis>=2.4"]
+
+[project.optional-dependencies]
+dev = ["pytest"]
+
+[project.scripts]
+liposome-build = "liposome_pipeline.cli:main"
+liposome-partition = "liposome_pipeline.analysis.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+liposome_pipeline = ["data/mdp/*.mdp"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+markers = ["gromacs: requires a working GROMACS installation"]
+filterwarnings = ["ignore::PendingDeprecationWarning:MDAnalysis"]

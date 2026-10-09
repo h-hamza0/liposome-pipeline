@@ -1,0 +1,29 @@
+# Minimal end-to-end smoke test: a small Martini 3 DOPC/CHOL box that is
+# solvated and energy-minimised. Run from the repository root:
+#   liposome-build run examples/quickstart.txt --overwrite
+
+system
+    input_dir     = input
+    output_dir    = runs/quickstart
+    forcefield    = input/martini
+    index_groups  = LIPD:['DOPC','CHOL'] SOLV:['W']
+    box_size      = 12 12 12
+    water_radius  = 0.21
+end
+
+molecule_dopc
+    name             = DOPC
+    nmol             = 60
+    insertion_radius = 0.3
+end
+
+molecule_chol
+    name             = CHOL
+    nmol             = 20
+    insertion_radius = 0.3
+end
+
+stage_em
+    type     = EM
+    nsteps   = 200
+end

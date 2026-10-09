@@ -1,0 +1,61 @@
+# Umbrella-sampling workflow starting from a finished liposome run
+# (restart_from points at its output directory). Requires SLURM.
+
+system
+    input_dir     = input
+    output_dir    = runs/umbrella
+    forcefield    = input/martini
+    index_groups  = LIPD:['DOPC','PEL','CHEMS'] DEXT:['DEXT'] SOLV:['W','NA','CL']
+    box_size      = 35 35 35
+    water_radius  = 0.21
+    center_box    = 35
+    restart_from  = runs/drug_loaded
+    drug          = DEXT
+    percentile    = 50
+end
+
+molecule_dopc
+    name             = DOPC
+    nmol             = 4000
+    insertion_radius = 0.3
+end
+
+molecule_dext
+    name             = DEXT
+    nmol             = 1
+    insertion_radius = 0.3
+end
+
+slurm
+    partition      = gpu
+    cpus_per_task  = 12
+    mem            = 32gb
+    gres           = gpu:1
+    setup_commands = module purge; source /path/to/GMXRC
+end
+
+stage_pull
+    type = PULL
+end
+
+stage_config
+    type  = CONFIG
+    umbrella = yes
+    lipid = CORE
+    drug  = SELECT
+end
+
+stage_em_us
+    type     = EM_US
+    umbrella = yes
+end
+
+stage_pull_equil
+    type     = PULL_EQUIL
+    umbrella = yes
+end
+
+stage_pull_us
+    type     = PULL_US
+    umbrella = yes
+end

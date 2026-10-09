@@ -1,0 +1,64 @@
+;define                   = -DPOSRES
+title                    = Martini_MD
+integrator               = md
+dt                       = 0.010 
+nsteps                   = 70000
+nstcomm                  = 100
+nstxout                  = 0
+nstvout                  = 0
+nstfout                  = 0
+nstlog                   = 10 
+nstenergy                = 10   
+nstxtcout                = 10 
+xtc_precision            = 10
+
+cutoff-scheme            = Verlet
+nstlist                  = 20
+ns_type                  = grid
+pbc                      = xyz
+verlet-buffer-tolerance  = 0.005
+
+coulombtype              = reaction-field
+coulomb-modifier         = Potential-shift-verlet
+rcoulomb                 = 1.2
+epsilon_r                = 15	
+epsilon_rf               = 0 
+vdw_type                 = cutoff 
+vdw-modifier             = Potential-shift-verlet 
+rvdw                     = 1.2
+rvdw-switch              = 0.9 
+
+tcoupl                   = v-rescale 
+tc-grps                  = LIPD SOLV
+tau_t                    = 1.0  1.0 
+ref_t                    = 298  298 
+Pcoupl                   = Berendsen
+Pcoupltype               = isotropic
+tau_p                    = 12.0  
+compressibility          = 3e-4
+ref_p                    = 1.0 
+
+gen_vel                  = yes
+gen_temp                 = 298
+
+constraints              = none
+constraint_algorithm     = Lincs
+continuation             = no
+refcoord-scaling         = com
+
+; Pull code
+pull                    = yes
+pull_ncoords            = 1        
+pull_ngroups            = 2          
+pull_group2_name        = CORE
+pull_group1_name        = DEXT  
+pull_coord1_type        = umbrella 
+pull_coord1_geometry    = distance  
+pull-pbc-ref-prev-step-com = yes
+pull_coord1_groups      = 2 1
+pull-coord1-vec         = 0 0 1 
+pull_coord1_dim         = Y Y Y
+pull_group2_pbcatom     = 78
+pull_coord1_start       = yes     
+pull_coord1_rate        = 0.01      
+pull_coord1_k           = 1000     

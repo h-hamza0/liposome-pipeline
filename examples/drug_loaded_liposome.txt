@@ -1,0 +1,58 @@
+# Production-style build: DOPC/PEL/CHEMS liposome loaded with dextromethorphan
+# (DEXT) and neutralising ions, followed by the standard equilibration ladder.
+# Counts and box size are illustrative; tune them for your own composition.
+
+system
+    input_dir     = input
+    output_dir    = runs/drug_loaded
+    forcefield    = input/martini
+    index_groups  = LIPD:['DOPC','PEL','CHEMS'] DEXT:['DEXT'] SOLV:['W','NA','CL']
+    box_size      = 35 35 35
+    water_radius  = 0.21
+end
+
+molecule_dopc
+    name             = DOPC
+    nmol             = 4000
+    insertion_radius = 0.3
+end
+
+molecule_pel
+    name             = PEL
+    nmol             = 3000
+    insertion_radius = 0.3
+end
+
+molecule_chems
+    name             = CHEMS
+    nmol             = 1000
+    insertion_radius = 0.3
+end
+
+molecule_dext
+    name             = DEXT
+    nmol             = 500
+    insertion_radius = 0.3
+end
+
+molecule_na
+    name             = NA
+    nmol             = 1000
+    insertion_radius = 0.3
+end
+
+stage_em
+    type = EM
+end
+
+stage_nvt
+    type = NVT
+end
+
+stage_npt
+    type = NPT_015
+end
+
+stage_md
+    type = MD
+end
