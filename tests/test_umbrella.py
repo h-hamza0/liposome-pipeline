@@ -38,3 +38,18 @@ def test_window_script_uses_minimisation_flags():
     em = umbrella.window_script([], "a.mdp", "t.top", "i.ndx", True)
     md = umbrella.window_script([], "a.mdp", "t.top", "i.ndx", False)
     assert "-bonded gpu" not in em and "-bonded gpu" in md
+
+
+def test_generated_scripts_are_valid_bash(tmp_path):
+    import shutil
+    import subprocess
+    from pathlib import Path
+
+    bash = shutil.which("bash")
+    assert bash
+    scripts = [
+        umbrella.window_script([Path("/a/2.5.gro"), Path("/a/3.gro")], "m.mdp", "t.top", "i.ndx", False),
+        umbrella.frame_extraction_script(Path("t.xtc"), Path("t.tpr"), Path("i.ndx"), [(2.5, 100.0)], Path("/o")),
+    ]
+    for script in scripts:
+        assert subprocess.run([bash, "-n"], input=script, text=True).returncode == 0

@@ -76,3 +76,46 @@ def test_example_configs_validate(repo_root, monkeypatch):
     monkeypatch.chdir(repo_root)
     for name in ("quickstart", "drug_loaded_liposome", "umbrella_sampling"):
         assert "stages" in Pipeline.from_file(repo_root / "examples" / f"{name}.txt").describe()
+
+
+RUN1 = CONFIG.replace("['DOPC','CHOL']", "['DOPC','DEXT']").replace(
+    "molecule_chol\n    name = CHOL\n    nmol = 10", "molecule_dext\n    name = DEXT\n    nmol = 3"
+)
+
+
+def build_first_run(tmp_path, repo_root):
+    out = tmp_path / "first"
+    cfg = tmp_path / "first.txt"
+    cfg.write_text(RUN1.format(root=repo_root, out=out))
+    Pipeline.from_file(cfg).run()
+    (out / "MD").mkdir()
+    shutil.copy(out / "EM" / "EM.gro", out / "MD" / "aligned.gro")
+    return out
+
+
+def restart_config(tmp_path, repo_root, first, extra=""):
+    text = RUN1.format(root=repo_root, out=tmp_path / "second")
+    text = text.replace("    water_radius = 0.21\n", f"    water_radius = 0.21\n    restart_from = {first}\n    drug = DEXT\n    percentile = 50\n")
+    text = text.replace("    insertion_radius = 0.3\nend\nmolecule_dext", "    insertion_radius = 0.3\n    insert = no\nend\nmolecule_dext")
+    text = text.replace("nmol = 3\n    insertion_radius = 0.3\n", f"nmol = 3\n    insertion_radius = 0.3\n{extra}")
+    cfg = tmp_path / "second.txt"
+    cfg.write_text(text)
+    return cfg
+
+
+@pytest.mark.gromacs
+def test_restart_reuses_topology_and_adds_drug_group(tmp_path, repo_root):
+    first = build_first_run(tmp_path, repo_root)
+    cfg = restart_config(tmp_path, repo_root, first, "    insert = no\n")
+    Pipeline.from_file(cfg).run()
+    second = tmp_path / "second" / "setup"
+    assert {"SELECT", "CORE"} <= set(index_group_names(second / "index.ndx"))
+    assert "DOPC   30" in (second / "topol.top").read_text()
+
+
+@pytest.mark.gromacs
+def test_crowded_insertion_is_an_error(tmp_path, repo_root):
+    first = build_first_run(tmp_path, repo_root)
+    cfg = restart_config(tmp_path, repo_root, first, "    insert = yes\n")
+    with pytest.raises(ConfigError, match="too crowded"):
+        Pipeline.from_file(cfg).run()

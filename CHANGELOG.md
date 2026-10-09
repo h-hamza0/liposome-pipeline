@@ -14,4 +14,7 @@ Initial public release, refactored from the original research scripts.
   identified by atom index (previously its residue number, and the nearest-atom search never updated).
 - Partition analysis: system discovery works for any root directory; the per-residue geometry is vectorised;
   single-replicate groups no longer produce NaN error bars.
+- Restarts (`restart_from`) start from the previous run's topology and append only the newly inserted
+  molecules; the old behaviour rebuilt the topology from config counts and could not match the structure.
+- Molecule insertion is verified: a box too crowded for `insertion_radius` is now an error, not a silent no-op.
 - Site-specific settings (SLURM partition, e-mail, GROMACS setup scripts) moved out of the code.

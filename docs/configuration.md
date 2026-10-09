@@ -29,7 +29,7 @@ resolved against the directory you run the command from.
 If an index group named `LIPD` is defined, a `CORE` group (lipid `NC3`, `NH3` and `PO4` beads) is
 added automatically for use as a pull reference.
 
-When restarting, only molecules named `NA`, `DEXT` or `IBU` are inserted unless a molecule sets
+When restarting, the topology of the previous run is reused and newly inserted molecules are appended to it. Only molecules named `NA`, `DEXT` or `IBU` are inserted unless a molecule sets
 `insert = yes|no` explicitly.
 
 ## `molecule_<label>`
