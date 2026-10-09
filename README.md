@@ -26,7 +26,7 @@ flowchart LR
 Requires Python ≥ 3.9 and a GROMACS installation (`gmx`) on `PATH`.
 
 ```bash
-git clone <this repository>
+git clone https://github.com/h-hamza0/liposome-pipeline.git
 cd liposome-pipeline
 python -m pip install -e ".[dev]"
 ```
